@@ -1,0 +1,6 @@
+{
+  "name": "Es.Ring",
+  "packages":[
+    ["NUnit","2.6.4"]
+  ]
+}
