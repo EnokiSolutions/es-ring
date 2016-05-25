@@ -42,7 +42,7 @@ namespace Es.Ring
         private readonly int _ringMask;
         private readonly T[] _items;
 
-        public Ring(int ringSize, int numConsumers = 1) // todo: sort out multiple consumers
+        public Ring(int ringSize)
         {
             _ringSize = ringSize;
             Debug.Assert((ringSize & (ringSize - 1)) == 0, "ringSize MUST be a power of 2");
