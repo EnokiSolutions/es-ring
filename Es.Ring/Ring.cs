@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Es.Ring
 {
@@ -41,10 +42,16 @@ namespace Es.Ring
         // Exposed because if you're using this you care about performance more than abstraction or safety.
         private readonly int _ringMask;
         private readonly T[] _items;
+        private readonly long _maxRead;
 
-        public Ring(int ringSize)
+        public Ring(int ringSize, long maxRead = 0)
         {
             _ringSize = ringSize;
+            if (maxRead == 0)
+                _maxRead = ringSize/4;
+            else
+                _maxRead = maxRead;
+
             Debug.Assert((ringSize & (ringSize - 1)) == 0, "ringSize MUST be a power of 2");
             Debug.Assert(ringSize > MaxBatchSize);
             _ringMask = _ringSize - 1;
@@ -114,6 +121,9 @@ namespace Es.Ring
             {
                 return false;
             }
+            if (readyToRead > _maxRead)
+                writeHead = readHead + _maxRead;
+
             action(_items, readHead, writeHead, _ringMask);
             _readHead = writeHead;
             return true;
